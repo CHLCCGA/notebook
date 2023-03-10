@@ -495,4 +495,252 @@ two point
 >            return l
 >```
 >
+
+### 4. 74 Search a 2D Matrix
+
+>
+>
+>```python
+>class Solution:
+>    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+>        if matrix==None or len(matrix)==0:
+>            return False
+>        row = len(matrix)
+>        col = len(matrix[0])
+>        l = 0
+>        r = row*col-1
+>        while l<=r:
+>            m = l+(r-l)//2 # m = (r + l) >> 1 位运算
+>            element=matrix[m//col][m%col]
+>            if element ==target:
+>                return True
+>            elif element<target:
+>                l=m+1
+>            else:
+>                r=m-1
+>        return False
+>```
+>
+
+---
+
+## DP
+
+### 1. 509. Fibonacci number
+
+>```python
+>class Solution:
+>    def fib(self, n: int) -> int:
+>        if n<=1:
+>            return n
+>        cur = 0
+>        pre1 = 0
+>        pre2 = 1
+>        for i in range(2,n+1):
+>            cur = pre1 +pre2 
+>            pre1 = pre2
+>            pre2 = cur
+>        return cur
+>```
+>
+>top-down
+>
+>```python
+>class Solution:
+>    cache={0:0,1:1}        
+>    def fib(self, n: int) -> int:
+>        if n in self.cache:
+>            return self.cache[n]
+>        self.cache[n]= self.cache[n-1]+self.cache[n-2]
+>        return self.cache[n]
+>```
+>
+
+
+
+### 2. 322 Coin Change
+
+>Button-Up
+>
+>```python
+>class Solution:
+>    def coinChange(self, coins: List[int], amount: int) -> int:
+>            dp = [0] + [amount+1]*amount
+>
+>            for i in range(amount+1):
+>                for c in coins:
+>                    if c <= i:
+>                        dp[i] = min(dp[i-c]+1,dp[i])
+>            
+>            if dp[amount] == amount + 1:
+>                return -1
+>            
+>            return dp[amount]
+>```
+>
+>
+
+### 3. 643. Maximum Average Subarray I
+
+>```python
+>class Solution:
+>    def findMaxAverage(self, nums: List[int], k: int) -> float:
+>        tmp = 0
+>        result = float('-inf')
+>
+>        for i,x in enumerate(nums):
+>            tmp += x
+>            if i>=k:
+>                tmp -= nums[i-k]
+>            if i>=k-1:
+>                result = max(tmp,result)
+>        result = result/k
+>
+>        return result
+>```
+>
+>
+>
+>
+
+---
+
+## Recurrsion
+
+### 1. 509. Fibonacci number
+
+>```python
+>class Solution:
+>    def fib(self, n: int) -> int:
+>        if n<=1:
+>            return n
+>        return self.fib(n-1)+self.fib(n-2)
+>```
+>
+>@cache
+>
+>```python
+># with cache function
+>class Solution:
+>    @cache #利用空间记录可能需要的数据
+>    def fib(self, n: int) -> int:
+>        if n<=1:
+>            return n
+>        return self.fib(n-1)+self.fib(n-2)
+>```
+>
+>优化版
+>
+>```python
+>class Solution:
+>    def fib(self, n: int) -> int:
+>        if n<=1:
+>            return n
+>        cache = [0]*(n+1)
+>        cache[1]=1
+>        for i in range(2,n+1):
+>			cache[i]= cache[i-1]+cache[i-2]
+>        return cache[n]
+>```
+>
+
+---
+
+# daily LeetCode
+
+> ```python
+> #!/bin/python3
+> 
+> import math
+> import os
+> import random
+> import re
+> import sys
+> 
+> 
+> #
+> # Complete the 'fizzBuzz' function below.
+> #
+> # The function accepts INTEGER n as parameter.
+> #
+> 
+> def fizzBuzz(n):
+> # Write your code here
+> for i in range(1,n+1):
+>    if i%3==0 and i%5==0:
+>        print('FizzBuzz')
+>    elif i%3==0:
+>        print('Fizz')
+>    elif i%5==0:
+>        print('Buzz')
+>    else:
+>        print(i)
+> if __name__ == '__main__':
+> ```
+>
+
+# LeetCode medium
+
+### 300. Longest Increasing Subsequence (DP)
+
+
+
+>```python
+>class Solution:
+>    def lengthOfLIS(self, nums: List[int]) -> int:
+>        dp = [1]*len(nums)
+>
+>        for i in range(1,len(nums)):
+>            for j in range(i):
+>                if nums[i]>nums[j]:
+>                    dp[i] = max(dp[i],dp[j]+1)
+>                    
+>        return max(dp)
+>```
+
+### 712. Minimum ASCII Delete Sum for Two Strings (DP)
+
+>```python
+>class Solution:
+>    def minimumDeleteSum(self, s1: str, s2: str) -> int:
+>        m,n = len(s1),len(s2)
+>        dp = [[0]*(n+1) for i in range(m+1)]
+>
+>        for i in range(1,m+1):
+>            for j in range(1,n+1):
+>                if s1[i-1] == s2[j-1]:
+>                    dp[i][j] = dp[i-1][j-1] + ord(s1[i-1])
+>                else:
+>                    dp[i][j] = max(dp[i-1][j],dp[i][j-1])
+>
+>        result = 0
+>        for i in s1:
+>            result += ord(i)
+>        for i in s2:
+>            result +=ord(i)
+>        return result - dp[m][n]*2
+>
+>            
+>```
+>
+
+### 376. Wiggle Subsequence(DP)
+
+>```python
+>class Solution:
+>    def wiggleMaxLength(self, nums: List[int]) -> int:
+>        pos = neg = 0
+>
+>        for i in range(len(nums)-1):
+>            if nums[i+1] - nums[i] > 0:
+>                pos = neg + 1
+>            elif nums[i+1] - nums[i] < 0:
+>                neg = pos + 1
+>        
+>        return max(pos,neg) + 1
+>
+>```
+>
+>
+>
 >
